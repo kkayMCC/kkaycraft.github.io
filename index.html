@@ -185,8 +185,8 @@
 <body>
   <div class="logo-bar">
     <img id="logo" src="logo.png" alt="Logo">
+    <div id="upload-logo-area" style="margin-top:10px;"></div>
   </div>
-
   <div class="nav-bar">
     <a onclick="showTab('home')">Trang chủ</a>
     <a onclick="showTab('capnhat')">Cập nhật</a>
@@ -318,6 +318,27 @@ document.getElementById("avatar-upload").onchange = function(e) {
   reader.readAsDataURL(file);
 };
 
+// UPLOAD LOGO TỪ MÁY
+function enableLogoUpload() {
+  const logoArea = document.getElementById("upload-logo-area");
+  if (!currentAdmin) {
+    logoArea.innerHTML = '';
+    return;
+  }
+  logoArea.innerHTML = `<input type="file" id="logo-upload" accept="image/*">`;
+  document.getElementById("logo-upload").onchange = function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const logoURL = event.target.result;
+      localStorage.setItem("siteLogo", logoURL);
+      document.getElementById("logo").src = logoURL;
+      alert("Đã thay logo thành công!");
+    };
+    reader.readAsDataURL(file);
+  };
+}
+
 function showTab(tab) {
   document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
@@ -331,8 +352,8 @@ function showTab(tab) {
   }
 
   document.getElementById("login-area").style.display = tab === "fanpage" ? "none" : "block";
-
-  loadPosts(); // luôn cập nhật bài viết khi đổi tab
+  loadPosts();
+  enableLogoUpload();
 }
 
 function submitPost(tab) {
@@ -363,7 +384,7 @@ function submitPost(tab) {
     localStorage.setItem("posts", JSON.stringify(posts));
     document.getElementById("post-content-" + tab).value = "";
     fileInput.value = "";
-    showTab(tab); // gọi lại tab để hiển thị bài ngay
+    showTab(tab); // refresh ngay
   };
 
   if (imageFile) {
