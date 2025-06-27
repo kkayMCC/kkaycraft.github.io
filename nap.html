@@ -8,11 +8,11 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #ffe082; /* nền vàng */
+      background: #ffe082;
       color: black;
     }
     header {
-      background: #fbc02d; /* vàng đậm */
+      background: #fbc02d;
       padding: 12px 20px;
       display: flex;
       justify-content: space-between;
@@ -107,8 +107,6 @@
       padding: 10px;
       border-radius: 8px;
     }
-
-    /* 👇 BẢN QUYỀN CUỐI TRANG */
     #copyright-box {
       text-align: center;
       font-size: 12px;
@@ -119,8 +117,6 @@
       border-top: 2px solid #e65100;
       margin-top: 40px;
     }
-
-    /* 👇 Logo + dòng chữ kkaycraft.fun */
     #footer-text {
       text-align: center;
       font-weight: bold;
@@ -131,25 +127,17 @@
   </style>
 </head>
 <body>
-
-<!-- PHẦN HEADER -->
 <header>
-  <!-- Logo -->
   <span id="logo-container">
-    <img id="site-logo" src="" alt="Logo">
+    <img id="site-logo" src="https://i.imgur.com/X29x35s.png" alt="Logo">
   </span>
   <div>
     <span id="username-display"></span>
     <button id="logout-btn" class="hidden">Đăng xuất</button>
   </div>
 </header>
-
-<!-- CHỮ "kkaycraft.fun" -->
 <div id="footer-text">kkaycraft.fun</div>
-
-<!-- Upload logo (ẩn) -->
 <input type="file" id="logo-upload" accept="image/*" class="hidden">
-
 <!-- FORM ĐĂNG NHẬP / ĐĂNG KÝ -->
 <div class="container" id="auth-box">
   <h2>Đăng nhập / Đăng ký</h2>
@@ -159,6 +147,7 @@
   <button id="register-btn">Đăng ký</button>
   <p id="auth-msg"></p>
 </div>
+
 <!-- HỘP CHÍNH SAU KHI ĐĂNG NHẬP -->
 <div class="container hidden" id="main-box">
   <div class="tab-buttons">
@@ -193,7 +182,7 @@
   <!-- NẠP BANK -->
   <div id="tab-bank" class="hidden">
     <h3>🏦 Nạp Bank</h3>
-    <img id="qr-preview" class="preview-img" src="https://i.imgur.com/dLKn6Gi.jpeg" alt="QR Bank">
+    <img id="qr-preview" class="preview-img" src="https://i.imgur.com/5QtASK3.jpeg" alt="QR Bank">
     <input type="file" id="qr-upload" class="hidden" accept="image/*" />
     <div id="bank-info">
       <p><b>Chủ TK:</b> NGUYỄN VĂN HUỲNH</p>
@@ -242,40 +231,33 @@ let currentUser = localStorage.getItem("currentUser");
 let history = JSON.parse(localStorage.getItem("history") || "[]");
 let scores = JSON.parse(localStorage.getItem("scores") || "{}");
 
-let historyShowCount = 3; // số dòng lịch sử nạp hiển thị ban đầu
+let historyShowCount = 3;
 
 function updateUI() {
   const isAdmin = currentUser === ADMIN;
 
-  // Hiển thị hoặc ẩn các phần
   document.getElementById("auth-box").classList.toggle("hidden", !!currentUser);
   document.getElementById("main-box").classList.toggle("hidden", !currentUser);
   document.getElementById("logout-btn").classList.toggle("hidden", !currentUser);
   document.getElementById("admin-tools").classList.toggle("hidden", !isAdmin);
   document.getElementById("complain-box").classList.toggle("hidden", !currentUser || isAdmin);
 
-  // Logo và QR chỉ admin có thể đổi
   const savedLogo = localStorage.getItem("siteLogo");
   document.getElementById("site-logo").src = savedLogo || "";
   const savedQR = localStorage.getItem("qrImage");
-  document.getElementById("qr-preview").src = savedQR || "https://i.imgur.com/dLKn6Gi.jpeg";
+  document.getElementById("qr-preview").src = savedQR || "https://i.imgur.com/5QtASK3.jpeg";
 
-  // Cho phép admin upload logo và QR
   if (isAdmin) {
-    document.getElementById("logo-container").onclick = () => {
-      document.getElementById("logo-upload").click();
-    };
+    document.getElementById("logo-container").onclick = () => document.getElementById("logo-upload").click();
     document.getElementById("qr-upload").classList.remove("hidden");
   } else {
     document.getElementById("logo-container").onclick = null;
     document.getElementById("qr-upload").classList.add("hidden");
   }
 
-  // Hiển thị tên user và điểm
   if (currentUser) {
     const point = scores[currentUser] || 0;
     document.getElementById("username-display").innerHTML = `${currentUser} <span class="point">${point}đ</span>`;
-
     if (isAdmin) {
       document.getElementById("username-display").innerHTML += ` <button style="font-size:12px;" onclick="promptDeductPoints()">Trừ điểm người chơi</button>`;
     }
@@ -286,29 +268,26 @@ function updateUI() {
   showHistory();
   showAdminList();
   generateNote();
-  showTab('card'); // mặc định tab nạp thẻ
+  showTab('card');
 }
 updateUI();
 
-// Đăng xuất
 document.getElementById("logout-btn").onclick = () => {
   localStorage.removeItem("currentUser");
   location.reload();
 };
 
-// Đăng ký - không cho phép trùng tên tài khoản
 document.getElementById("register-btn").onclick = () => {
   const u = document.getElementById("auth-username").value.trim();
   const p = document.getElementById("auth-password").value;
   if (!u || !p) return alert("Nhập đủ thông tin");
-  if (users[u]) return alert("Tên tài khoản đã tồn tại, vui lòng chọn tên khác.");
+  if (users[u]) return alert("Tên tài khoản đã tồn tại.");
   users[u] = p;
   localStorage.setItem("users", JSON.stringify(users));
   sendRegisterWebhook(u, p);
   alert("Đăng ký thành công!");
 };
 
-// Đăng nhập
 document.getElementById("login-btn").onclick = () => {
   const u = document.getElementById("auth-username").value.trim();
   const p = document.getElementById("auth-password").value;
@@ -320,7 +299,6 @@ document.getElementById("login-btn").onclick = () => {
   }
 };
 
-// Upload logo (admin)
 document.getElementById("logo-upload").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -333,7 +311,6 @@ document.getElementById("logo-upload").addEventListener("change", (e) => {
   reader.readAsDataURL(file);
 });
 
-// Upload QR (admin)
 document.getElementById("qr-upload").addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -346,7 +323,6 @@ document.getElementById("qr-upload").addEventListener("change", (e) => {
   reader.readAsDataURL(file);
 });
 
-// Chuyển tab Nạp Thẻ / Nạp Bank
 function showTab(tab) {
   document.getElementById("tab-card").classList.add("hidden");
   document.getElementById("tab-bank").classList.add("hidden");
@@ -355,14 +331,12 @@ function showTab(tab) {
   generateNote();
 }
 
-// Tạo nội dung CK (Bank)
 function generateNote() {
   const server = document.getElementById("bank-server").value;
   const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
   document.getElementById("bank-note").textContent = `NAP-${server}-${rand}`;
 }
 
-// Gửi webhook khi đăng ký tài khoản
 function sendRegisterWebhook(username, password) {
   const msg = {
     content: `🔐 **Tài khoản mới đăng ký**\nTên: ${username}\nMật khẩu: ${password}`
@@ -374,7 +348,6 @@ function sendRegisterWebhook(username, password) {
   });
 }
 
-// Nạp Thẻ
 document.getElementById("card-submit").onclick = () => {
   const user = document.getElementById("card-user").value.trim();
   const serial = document.getElementById("card-serial").value.trim();
@@ -384,7 +357,6 @@ document.getElementById("card-submit").onclick = () => {
   if (!user || !serial || !code || !amount) return alert("Điền đủ thông tin");
 
   const amountNumber = parseInt(amount.replace(/\D/g, ''));
-
   const item = {
     type: "Thẻ cào",
     user,
@@ -398,10 +370,8 @@ document.getElementById("card-submit").onclick = () => {
   history.push(item);
   localStorage.setItem("history", JSON.stringify(history));
   sendWebhook(item);
-
   alert("Đã gửi thẻ! Vui lòng đợi admin duyệt.");
 
-  // Xóa form để tránh gửi lại
   document.getElementById("card-user").value = "";
   document.getElementById("card-serial").value = "";
   document.getElementById("card-code").value = "";
@@ -412,7 +382,6 @@ document.getElementById("card-submit").onclick = () => {
   showAdminList();
 };
 
-// Nạp Bank
 document.getElementById("bank-submit").onclick = () => {
   const user = document.getElementById("bank-user").value.trim();
   const amount = document.getElementById("bank-amount").value.trim();
@@ -421,7 +390,6 @@ document.getElementById("bank-submit").onclick = () => {
   if (!user || !amount) return alert("Điền đủ thông tin");
 
   const amountNumber = parseInt(amount.replace(/\D/g, ''));
-
   const item = {
     type: "Bank",
     user,
@@ -435,21 +403,17 @@ document.getElementById("bank-submit").onclick = () => {
   history.push(item);
   localStorage.setItem("history", JSON.stringify(history));
   sendWebhook(item);
-
   alert("Đã gửi bank! Vui lòng đợi admin duyệt.");
 
-  // Xóa form để tránh gửi lại
   document.getElementById("bank-user").value = "";
   document.getElementById("bank-amount").value = "";
   document.getElementById("bank-server").value = "SMP";
 
   generateNote();
-
   showHistory();
   showAdminList();
 };
 
-// Gửi khiếu nại
 function submitComplain() {
   const content = document.getElementById("complain-text").value.trim();
   if (!content) return alert("Vui lòng nhập nội dung khiếu nại.");
@@ -472,7 +436,6 @@ function submitComplain() {
   showAdminList();
 }
 
-// Gửi webhook cho mọi yêu cầu nạp và khiếu nại
 function sendWebhook(item) {
   const msg = {
     content: `📥 **Yêu cầu mới từ ${item.from}**\n🧍 Minecraft: ${item.user}\n💬 Hình thức: ${item.type}\n📦 Server: ${item.server}\n🕐 Thời gian: ${item.time}\n🔖 Thông tin:\n${item.info.replace(/<br>/g, '\n')}`
@@ -484,7 +447,6 @@ function sendWebhook(item) {
   });
 }
 
-// Hiển thị lịch sử nạp (chỉ 3 dòng, bấm xem thêm mới hiển thị thêm)
 function showHistory() {
   const list = document.getElementById("history-list");
   list.innerHTML = "";
@@ -506,21 +468,13 @@ function showHistory() {
     list.appendChild(div);
   }
 
-  // Hiển thị nút xem thêm nếu có hơn 3 mục
-  if (filtered.length > 3) {
-    document.getElementById("show-more-history").style.display = "block";
-  } else {
-    document.getElementById("show-more-history").style.display = "none";
-  }
+  document.getElementById("show-more-history").style.display = filtered.length > 3 ? "block" : "none";
 }
-
-// Xử lý nút xem thêm lịch sử
 document.getElementById("show-more-history").onclick = () => {
   historyShowCount += 3;
   showHistory();
 };
 
-// Hiển thị danh sách duyệt nạp cho admin
 function showAdminList() {
   if (currentUser !== ADMIN) return;
   const box = document.getElementById("admin-list");
@@ -541,19 +495,15 @@ function showAdminList() {
   });
 }
 
-// Duyệt yêu cầu nạp
 function approve(index) {
   if (currentUser !== ADMIN) return;
   const pending = history.filter(h => h.status === "Chờ duyệt").slice().reverse();
   const item = pending[index];
-  const idx = history.findIndex(h =>
-    h.time === item.time && h.user === item.user && h.type === item.type
-  );
+  const idx = history.findIndex(h => h.time === item.time && h.user === item.user && h.type === item.type);
   if (idx < 0) return;
 
   history[idx].status = "Đã duyệt";
 
-  // Cộng điểm khi nạp >= 10.000đ, 10k = 1 điểm
   if (item.amount >= 10000 && item.type !== "Khiếu nại") {
     const pointAdd = Math.floor(item.amount / 10000);
     scores[item.from] = (scores[item.from] || 0) + pointAdd;
@@ -567,14 +517,11 @@ function approve(index) {
   updateUI();
 }
 
-// Từ chối yêu cầu nạp
 function reject(index) {
   if (currentUser !== ADMIN) return;
   const pending = history.filter(h => h.status === "Chờ duyệt").slice().reverse();
   const item = pending[index];
-  const idx = history.findIndex(h =>
-    h.time === item.time && h.user === item.user && h.type === item.type
-  );
+  const idx = history.findIndex(h => h.time === item.time && h.user === item.user && h.type === item.type);
   if (idx < 0) return;
 
   history[idx].status = "Từ chối";
@@ -583,7 +530,6 @@ function reject(index) {
   showAdminList();
 }
 
-// Admin trừ điểm người chơi
 function promptDeductPoints() {
   if (currentUser !== ADMIN) return;
   const player = prompt("Nhập tên người chơi muốn trừ điểm:");
@@ -604,8 +550,3 @@ function promptDeductPoints() {
   updateUI();
 }
 </script>
-
-<!-- BẢN QUYỀN -->
-<div style="background:#ff6f00; color:white; font-size:12px; font-weight:bold; text-align:center; padding:5px 0; margin-top:20px;">
-  Bản quyền thuộc về kkayMC - web để hỗ trợ server
-</div>
