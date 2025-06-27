@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>kkayMC Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; background: #f2f2f2; }
+    header {
+      display: flex; align-items: center; padding: 10px 20px;
+      background: #fff; border-bottom: 2px solid #ccc;
+    }
+    .logo { height: 50px; }
+    nav { margin-left: auto; }
+    nav a {
+      margin: 0 10px; text-decoration: none; color: #333;
+      font-weight: bold; cursor: pointer;
+    }
+    .section {
+      display: none; padding: 20px;
+    }
+    .active { display: block; }
+
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px;
+    }
+    .card {
+      background: #fff; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .card img {
+      width: 100%; height: 100px; object-fit: cover;
+    }
+    .card .info {
+      padding: 10px;
+    }
+    .card .info h3 {
+      font-size: 16px; margin: 5px 0;
+    }
+    .card .info .rating { color: #f39c12; font-size: 14px; }
+    .card .info .users { font-size: 13px; color: #777; }
+
+    input {
+      padding: 10px; margin-bottom: 10px;
+      width: 90%; border-radius: 5px; border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      background: #00cc66;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #login-msg, #reg-msg { color: red; font-size: 14px; }
+
+    footer {
+      text-align: center; padding: 15px; background: #eee; color: #333;
+    }
+
+    a button {
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="Logo KKAY CRAFT" class="logo">
+  <nav>
+    <a onclick="showSection('modpack')">Modpack</a>
+    <a onclick="showSection('server')">Server</a>
+    <a onclick="showSection('account')">Tài khoản</a>
+  </nav>
+</header>
+
+<!-- 🔸 MODPACK -->
+<div class="section active" id="modpack">
+  <h2>📦 Modpack mới nhất</h2>
+  <div class="cards">
+
+    <!-- 🔹 MODPACK 1 -->
+    <div class="card">
+      <img src="[dananhoday]" alt="Ảnh modpack">
+      <div class="info">
+        <h3>Modpack Sinh Tồn 1.20</h3>
+        <div class="rating">⭐ 4.9</div>
+        <div class="users">👤 123 tải</div>
+        <a href="grassmine.vn" target="_blank">
+          <button>📥 Tải modpack</button>
+        </a>
+      </div>
+    </div>
+
+    <!-- 🔹 MODPACK 2 -->
+    <div class="card">
+      <img src="[dananhoday]" alt="Ảnh modpack">
+      <div class="info">
+        <h3>Skyblock Kbay</h3>
+        <div class="rating">⭐ 4.8</div>
+        <div class="users">👤 97 tải</div>
+        <a href="[danlinkoday]" target="_blank">
+          <button>📥 Tải modpack</button>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 🔸 SERVER -->
+<div class="section" id="server">
+  <h2>🌐 Server Minecraft</h2>
+  <p>IP: <strong>kkaycraft.fun</strong></p>
+  <button onclick="copyIP()">📋 Copy IP</button>
+</div>
+
+<!-- 🔸 TÀI KHOẢN -->
+<div class="section" id="account">
+  <h2>📝 Đăng ký tài khoản</h2>
+  <input type="text" id="reg-user" placeholder="Tên tài khoản"><br>
+  <input type="password" id="reg-pass" placeholder="Mật khẩu"><br>
+  <button onclick="register()">Đăng ký</button>
+  <p id="reg-msg"></p>
+
+  <h2>🔐 Đăng nhập</h2>
+  <input type="text" id="login-user" placeholder="Tên tài khoản"><br>
+  <input type="password" id="login-pass" placeholder="Mật khẩu"><br>
+  <button onclick="login()">Đăng nhập</button>
+  <p id="login-msg"></p>
+</div>
+
+<footer>
+  &copy; 2025 KKAY CRAFT - Website Minecraft bởi kkaymc
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('.section');
+  function showSection(id) {
+    sections.forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function copyIP() {
+    navigator.clipboard.writeText("kkaycraft.fun");
+    alert("📋 IP đã được copy!");
+  }
+
+  const accounts = [];
+
+  function register() {
+    const user = document.getElementById("reg-user").value.trim();
+    const pass = document.getElementById("reg-pass").value.trim();
+    const msg = document.getElementById("reg-msg");
+    if (!user || !pass) {
+      msg.textContent = "Vui lòng nhập đầy đủ.";
+      return;
+    }
+    if (accounts.some(acc => acc.username === user)) {
+      msg.textContent = "Tài khoản đã tồn tại.";
+      return;
+    }
+    accounts.push({ username: user, password: pass });
+    msg.textContent = "✅ Đăng ký thành công!";
+  }
+
+  function login() {
+    const user = document.getElementById("login-user").value.trim();
+    const pass = document.getElementById("login-pass").value.trim();
+    const msg = document.getElementById("login-msg");
+    const found = accounts.find(acc => acc.username === user && acc.password === pass);
+    if (found) {
+      msg.textContent = "✅ Đăng nhập thành công!";
+    } else {
+      msg.textContent = "Sai tài khoản hoặc mật khẩu!";
+    }
+  }
+</script>
+
+</body>
+</html>
