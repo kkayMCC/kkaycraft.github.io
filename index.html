@@ -1,188 +1,457 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>kkayMC Website</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>KkayCraft - Lobby</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { margin: 0; background: #f2f2f2; }
-    header {
-      display: flex; align-items: center; padding: 10px 20px;
-      background: #fff; border-bottom: 2px solid #ccc;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fffde7;
     }
-    .logo { height: 50px; }
-    nav { margin-left: auto; }
-    nav a {
-      margin: 0 10px; text-decoration: none; color: #333;
-      font-weight: bold; cursor: pointer;
+    .logo-bar {
+      text-align: center;
+      padding: 10px 0;
+      background: #ffcc33;
+      border-bottom: 4px solid #ff9900;
     }
-    .section {
-      display: none; padding: 20px;
+    .logo-bar img {
+      height: 80px;
     }
-    .active { display: block; }
 
-    .cards {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px;
+    .nav-bar {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      background: #ff9900;
+      padding: 10px 0;
+      border-bottom: 3px solid #cc3300;
     }
-    .card {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: 0.2s;
-    }
-    .card:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    .card img {
-      width: 100%; height: 100px; object-fit: cover;
-    }
-    .card .info {
-      padding: 10px;
-    }
-    .card .info h3 {
-      font-size: 16px; margin: 5px 0;
-    }
-    .card .info .rating { color: #f39c12; font-size: 14px; }
-    .card .info .users { font-size: 13px; color: #777; }
-
-    input {
-      padding: 10px; margin-bottom: 10px;
-      width: 90%; border-radius: 5px; border: 1px solid #ccc;
-    }
-    button {
-      padding: 10px 20px;
-      background: #00cc66;
-      border: none;
+    .nav-bar a {
       color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .top-right {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      text-align: right;
+    }
+    .top-right button {
+      background: #cc3300;
+      color: white;
+      border: none;
+      padding: 6px 12px;
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
     }
-
-    #login-msg, #reg-msg { color: red; font-size: 14px; }
-
-    footer {
-      text-align: center; padding: 15px; background: #eee; color: #333;
+    .login-link {
+      margin-top: 5px;
+    }
+    .login-link a {
+      font-size: 13px;
+      color: #333;
+      text-decoration: underline;
+      cursor: pointer;
     }
 
-    a button {
+    .tab-content {
+      display: none;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .post {
+      background: #fff3e0;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .post img.avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+    .post .info {
+      flex: 1;
+    }
+    .post .name {
+      font-weight: bold;
+      color: red;
+    }
+    .post .name::before {
+      content: "👑 ";
+    }
+    .post img.attach {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+    .post .actions {
+      font-size: 14px;
+      color: #444;
+      margin-top: 8px;
+    }
+    .post .actions span {
+      margin-right: 15px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .post .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: red;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login-popup {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff8e1;
+      border: 2px solid #ff9800;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+      z-index: 100;
+      width: 300px;
+    }
+
+    .community-links {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .community-links a {
+      display: inline-block;
+      margin: 5px 10px;
+      background: #ffe082;
+      padding: 5px 10px;
+      border-radius: 5px;
+      text-decoration: none;
+      color: #000;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      background: #ffcc80;
+      padding: 10px;
+      font-size: 12px;
+      color: #333;
+      margin-top: 30px;
+    }
+
+    textarea, input {
       width: 100%;
       margin-top: 10px;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      background: #fffde7;
+    }
+
+    button {
+      padding: 8px 14px;
+      background: #ff9800;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
-<header>
-  <img src="logo.png" alt="Logo KKAY CRAFT" class="logo">
-  <nav>
-    <a onclick="showSection('modpack')">Modpack</a>
-    <a onclick="showSection('server')">Server</a>
-    <a onclick="showSection('account')">Tài khoản</a>
-  </nav>
-</header>
-
-<!-- 🔸 MODPACK -->
-<div class="section active" id="modpack">
-  <h2>📦 Modpack mới nhất</h2>
-  <div class="cards">
-
-    <!-- 🔹 MODPACK 1 -->
-    <div class="card">
-      <img src="[dananhoday]" alt="Ảnh modpack">
-      <div class="info">
-        <h3>Modpack Sinh Tồn 1.20</h3>
-        <div class="rating">⭐ 4.9</div>
-        <div class="users">👤 123 tải</div>
-        <a href="grassmine.vn" target="_blank">
-          <button>📥 Tải modpack</button>
-        </a>
-      </div>
-    </div>
-
-    <!-- 🔹 MODPACK 2 -->
-    <div class="card">
-      <img src="[dananhoday]" alt="Ảnh modpack">
-      <div class="info">
-        <h3>Skyblock Kbay</h3>
-        <div class="rating">⭐ 4.8</div>
-        <div class="users">👤 97 tải</div>
-        <a href="[danlinkoday]" target="_blank">
-          <button>📥 Tải modpack</button>
-        </a>
-      </div>
-    </div>
-
+  <div class="logo-bar">
+    <img id="logo" src="logo.png" alt="Logo">
   </div>
-</div>
 
-<!-- 🔸 SERVER -->
-<div class="section" id="server">
-  <h2>🌐 Server Minecraft</h2>
-  <p>IP: <strong>kkaycraft.fun</strong></p>
-  <button onclick="copyIP()">📋 Copy IP</button>
-</div>
+  <div class="nav-bar">
+    <a onclick="showTab('home')">Trang chủ</a>
+    <a onclick="showTab('capnhat')">Cập nhật</a>
+    <a onclick="showTab('fanpage')">Fanpage</a>
+  </div>
 
-<!-- 🔸 TÀI KHOẢN -->
-<div class="section" id="account">
-  <h2>📝 Đăng ký tài khoản</h2>
-  <input type="text" id="reg-user" placeholder="Tên tài khoản"><br>
-  <input type="password" id="reg-pass" placeholder="Mật khẩu"><br>
-  <button onclick="register()">Đăng ký</button>
-  <p id="reg-msg"></p>
+  <div class="top-right">
+    <button onclick="window.location.href='nap.html'">Nạp tiền</button>
+    <div class="login-link" id="login-area">
+      <a onclick="toggleLogin()">Đăng nhập</a>
+    </div>
+  </div>
 
-  <h2>🔐 Đăng nhập</h2>
-  <input type="text" id="login-user" placeholder="Tên tài khoản"><br>
-  <input type="password" id="login-pass" placeholder="Mật khẩu"><br>
-  <button onclick="login()">Đăng nhập</button>
-  <p id="login-msg"></p>
-</div>
+  <div class="tab-content active" id="home">
+    <h2>📢 Thông tin server</h2>
+    <div id="post-form-home" style="display:none">
+      <textarea id="post-content-home" placeholder="Nội dung thông báo..."></textarea>
+      <input type="file" id="post-image-home" accept="image/*">
+      <button onclick="submitPost('home')">Đăng bài</button>
+    </div>
+    <div id="post-list-home"></div>
+  </div>
 
-<footer>
-  &copy; 2025 KKAY CRAFT - Website Minecraft bởi kkaymc
-</footer>
+  <div class="tab-content" id="capnhat">
+    <h2>📝 Cập nhật</h2>
+    <div id="post-form-capnhat" style="display:none">
+      <textarea id="post-content-capnhat" placeholder="Nội dung cập nhật..."></textarea>
+      <input type="file" id="post-image-capnhat" accept="image/*">
+      <button onclick="submitPost('capnhat')">Đăng bài</button>
+    </div>
+    <div id="post-list-capnhat"></div>
+  </div>
 
+  <div class="tab-content" id="fanpage">
+    <h2>📌 Fanpage & Cộng đồng</h2>
+    <div class="community-links">
+      <a href="https://zalo.me/g/zglhba955" target="_blank">Zalo</a>
+      <a href="https://m.me/j/AbZg-S6vWklF-URp/" target="_blank">Messenger</a>
+      <a href="https://discord.gg/gMSDryXg" target="_blank">Discord kkayCraft</a>
+      <a href="https://discord.gg/pQqxTe3HV8" target="_blank">Discord Royalmc</a>
+    </div>
+  </div>
+
+  <div class="login-popup" id="login-box">
+    <h3 id="login-title">Đăng nhập Admin</h3>
+    <div id="login-form">
+      <input type="text" id="username" placeholder="Tên đăng nhập">
+      <input type="password" id="password" placeholder="Mật khẩu">
+      <button onclick="login()">Đăng nhập</button>
+    </div>
+    <div id="admin-settings" style="display:none">
+      <input type="text" id="display-name" placeholder="Tên hiển thị mới">
+      <input type="file" id="avatar-upload" accept="image/*">
+      <button onclick="saveProfile()">Lưu thông tin</button>
+      <button onclick="logout()" style="margin-top:10px;background:#f44336;">Đăng xuất</button>
+    </div>
+  </div>
+
+  <footer>Bản quyền thuộc về kkayMC - web để hỗ trợ server</footer>
 <script>
-  const sections = document.querySelectorAll('.section');
-  function showSection(id) {
-    sections.forEach(sec => sec.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+const admins = {
+  "ItzkkayMC": "Vh1942007",
+  "Hieu123": "Hieu123"
+};
+let currentAdmin = localStorage.getItem("admin");
+let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+
+function updateLoginArea() {
+  const loginArea = document.getElementById("login-area");
+  loginArea.innerHTML = currentAdmin
+    ? `<a onclick="toggleLogin()" style="cursor:pointer;font-weight:bold;">⚙️ Admin</a>`
+    : `<a onclick="toggleLogin()">Đăng nhập</a>`;
+}
+
+function toggleLogin() {
+  const box = document.getElementById("login-box");
+  if (box.style.display === "block") {
+    box.style.display = "none";
+    return;
+  }
+  document.getElementById("login-title").innerText = currentAdmin ? "Cài đặt Admin" : "Đăng nhập Admin";
+  document.getElementById("login-form").style.display = currentAdmin ? "none" : "block";
+  document.getElementById("admin-settings").style.display = currentAdmin ? "block" : "none";
+  if (currentAdmin) {
+    document.getElementById("display-name").value = localStorage.getItem("displayName_" + currentAdmin) || currentAdmin;
+  }
+  box.style.display = "block";
+}
+
+function login() {
+  const u = document.getElementById("username").value.trim();
+  const p = document.getElementById("password").value.trim();
+  if (admins[u] === p) {
+    currentAdmin = u;
+    localStorage.setItem("admin", u);
+    alert("Đăng nhập thành công!");
+    document.getElementById("login-box").style.display = "none";
+    updateLoginArea();
+    loadPosts();
+    showTab("home");
+  } else {
+    alert("Sai tài khoản hoặc mật khẩu.");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("admin");
+  currentAdmin = null;
+  updateLoginArea();
+  document.getElementById("login-box").style.display = "none";
+  showTab("home");
+}
+
+function saveProfile() {
+  const name = document.getElementById("display-name").value.trim();
+  if (name) localStorage.setItem("displayName_" + currentAdmin, name);
+  alert("Đã lưu tên hiển thị!");
+  loadPosts();
+}
+
+document.getElementById("avatar-upload").onchange = function(e) {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    localStorage.setItem("adminAvatar_" + currentAdmin, event.target.result);
+    alert("Đã cập nhật avatar!");
+    loadPosts();
+  };
+  reader.readAsDataURL(file);
+};
+
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+
+  if (currentAdmin) {
+    document.getElementById("post-form-home").style.display = tab === "home" ? "block" : "none";
+    document.getElementById("post-form-capnhat").style.display = tab === "capnhat" ? "block" : "none";
+  } else {
+    document.getElementById("post-form-home").style.display = "none";
+    document.getElementById("post-form-capnhat").style.display = "none";
   }
 
-  function copyIP() {
-    navigator.clipboard.writeText("kkaycraft.fun");
-    alert("📋 IP đã được copy!");
-  }
+  document.getElementById("login-area").style.display = tab === "fanpage" ? "none" : "block";
 
-  const accounts = [];
+  loadPosts(); // luôn cập nhật bài viết khi đổi tab
+}
 
-  function register() {
-    const user = document.getElementById("reg-user").value.trim();
-    const pass = document.getElementById("reg-pass").value.trim();
-    const msg = document.getElementById("reg-msg");
-    if (!user || !pass) {
-      msg.textContent = "Vui lòng nhập đầy đủ.";
-      return;
-    }
-    if (accounts.some(acc => acc.username === user)) {
-      msg.textContent = "Tài khoản đã tồn tại.";
-      return;
-    }
-    accounts.push({ username: user, password: pass });
-    msg.textContent = "✅ Đăng ký thành công!";
-  }
+function submitPost(tab) {
+  if (!currentAdmin) return alert("Chỉ admin được đăng bài.");
 
-  function login() {
-    const user = document.getElementById("login-user").value.trim();
-    const pass = document.getElementById("login-pass").value.trim();
-    const msg = document.getElementById("login-msg");
-    const found = accounts.find(acc => acc.username === user && acc.password === pass);
-    if (found) {
-      msg.textContent = "✅ Đăng nhập thành công!";
-    } else {
-      msg.textContent = "Sai tài khoản hoặc mật khẩu!";
-    }
+  const content = document.getElementById("post-content-" + tab).value.trim();
+  const fileInput = document.getElementById("post-image-" + tab);
+  const imageFile = fileInput.files[0];
+  const reader = new FileReader();
+  const avatar = localStorage.getItem("adminAvatar_" + currentAdmin) || "https://i.imgur.com/4ZQZ4Zy.png";
+  const displayName = localStorage.getItem("displayName_" + currentAdmin) || currentAdmin;
+  const newPost = {
+    id: Date.now(),
+    author: displayName,
+    avatar: avatar,
+    text: content,
+    image: "",
+    tab: tab,
+    views: 0,
+    likes: 0,
+    dislikes: 0
+  };
+
+  if (!content) return alert("Vui lòng nhập nội dung.");
+
+  const done = () => {
+    posts.push(newPost);
+    localStorage.setItem("posts", JSON.stringify(posts));
+    document.getElementById("post-content-" + tab).value = "";
+    fileInput.value = "";
+    showTab(tab); // gọi lại tab để hiển thị bài ngay
+  };
+
+  if (imageFile) {
+    reader.onload = function(e) {
+      newPost.image = e.target.result;
+      done();
+    };
+    reader.readAsDataURL(imageFile);
+  } else {
+    done();
   }
+}
+
+function loadPosts() {
+  ["home", "capnhat"].forEach(tab => {
+    const list = document.getElementById("post-list-" + tab);
+    if (!list) return;
+    list.innerHTML = "";
+
+    posts.filter(p => p.tab === tab).slice().reverse().forEach(p => {
+      if (!localStorage.getItem("viewed_" + p.id)) {
+        p.views++;
+        localStorage.setItem("viewed_" + p.id, "1");
+      }
+
+      const div = document.createElement("div");
+      div.className = "post";
+
+      const liked = localStorage.getItem("liked_" + p.id);
+      const disliked = localStorage.getItem("disliked_" + p.id);
+
+      div.innerHTML = `
+        <img class="avatar" src="${p.avatar}">
+        <div class="info">
+          <div class="name">${p.author}</div>
+          <div class="text">${p.text}</div>
+          ${p.image ? `<img class="attach" src="${p.image}">` : ""}
+          <div class="actions">
+            <span onclick="likePost(${p.id})" style="color:${liked ? 'red' : 'black'}">❤️ ${p.likes}</span>
+            <span onclick="dislikePost(${p.id})" style="color:${disliked ? 'blue' : 'black'}">👎 ${p.dislikes}</span>
+            <span>👁️ ${p.views}</span>
+          </div>
+        </div>
+        ${currentAdmin ? `<button class="delete-btn" onclick="deletePost(${p.id})">🗑</button>` : ""}
+      `;
+      list.appendChild(div);
+    });
+  });
+
+  localStorage.setItem("posts", JSON.stringify(posts));
+}
+
+function deletePost(id) {
+  if (!confirm("Bạn chắc chắn muốn xoá bài này?")) return;
+  posts = posts.filter(p => p.id !== id);
+  localStorage.setItem("posts", JSON.stringify(posts));
+  loadPosts();
+}
+
+function likePost(id) {
+  if (localStorage.getItem("liked_" + id)) return;
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  post.likes++;
+  localStorage.setItem("liked_" + id, "1");
+  localStorage.removeItem("disliked_" + id);
+  localStorage.setItem("posts", JSON.stringify(posts));
+  loadPosts();
+}
+
+function dislikePost(id) {
+  if (localStorage.getItem("disliked_" + id)) return;
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  post.dislikes++;
+  localStorage.setItem("disliked_" + id, "1");
+  localStorage.removeItem("liked_" + id);
+  localStorage.setItem("posts", JSON.stringify(posts));
+  loadPosts();
+}
+
+window.onload = () => {
+  updateLoginArea();
+  loadPosts();
+  const savedLogo = localStorage.getItem("siteLogo");
+  if (savedLogo) document.getElementById("logo").src = savedLogo;
+  showTab("home");
+};
 </script>
-
 </body>
 </html>
